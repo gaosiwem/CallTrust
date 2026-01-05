@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: calltrust
+    ports:
+      - "5432:5432"
+
+  ai-service:
+    build:
+      context: ./ai-service
+    ports:
+      - "8000:8000"
+
+  backend:
+    build:
+      context: ./Backend
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/calltrust?schema=public
+      ML_SERVICE_URL: http://ai-service:8000
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    command: /bin/sh -c "npx prisma db push && npm run start"
+    depends_on:
+      - db
+      - ai-service
+
+  mobile:
+    build:
+      context: ./mobile
+    ports:
+      - "8081:8081"
+    environment:
+      - EXPO_DEV_SERVER_PROXY_URL=http://backend:3000
+    depends_on:
+      - backend

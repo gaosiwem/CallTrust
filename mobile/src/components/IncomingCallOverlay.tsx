@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 // @ts-ignore
-import * as Telephony from "expo-telephony";
+// import * as Telephony from "expo-telephony";
 import { evaluateIncomingCall } from "../services/callService";
 
 export default function IncomingCallOverlay() {
   const [decision, setDecision] = useState<null | any>(null);
 
   useEffect(() => {
+    // Note: Telephony logic is commented out to allow web testing
+    // Actual call screening is handled by native Kotlin services
+    /*
     if (!Telephony.addListener) return;
 
     const sub = Telephony.addListener(async (event: any) => {
@@ -26,6 +29,7 @@ export default function IncomingCallOverlay() {
     });
 
     return () => sub.remove();
+    */
   }, []);
 
   if (!decision) return null;
