@@ -1,0 +1,146 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id          String   @id @default(uuid())
+  phoneNumber String   @unique
+  createdAt   DateTime @default(now())
+}
+
+model CallLog {
+  id           String   @id @default(uuid())
+  callerNumber String
+  receiverId   String
+  createdAt    DateTime @default(now())
+}
+
+model Consent {
+  id           String    @id @default(uuid())
+  userId       String
+  callerNumber String
+  granted      Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  revokedAt    DateTime?
+}
+
+model SpamReport {
+  id           String   @id @default(uuid())
+  reporterId   String
+  callerNumber String
+  reason       String
+  createdAt    DateTime @default(now())
+}
+
+model CallScore {
+  id           String   @id @default(uuid())
+  callerNumber String
+  score        Int
+  riskLevel    String
+  calculatedAt DateTime @default(now())
+}
+
+model Business {
+  id             String   @id @default(uuid())
+  name           String
+  registrationNo String   @unique
+  verified       Boolean  @default(false)
+  trustScore     Int      @default(50)
+  createdAt      DateTime @default(now())
+  businessCallers BusinessCaller[]
+}
+
+model BusinessCaller {
+  id           String   @id @default(uuid())
+  businessId   String
+  phoneNumber  String   @unique
+  active       Boolean  @default(true)
+  Business     Business @relation(fields: [businessId], references: [id])
+}
+
+
+model ReputationEvent {
+  id        String   @id @default(uuid())
+  caller    String
+  delta     Int
+  reason    String
+  createdAt DateTime @default(now())
+}
+
+
+model Subscription {
+  id        String   @id @default(uuid())
+  userId    String
+  plan      String
+  active    Boolean  @default(true)
+  startDate DateTime @default(now())
+  endDate   DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model CallEvent {
+  id         String   @id @default(uuid())
+  businessId String
+  outcome    String
+  createdAt  DateTime @default(now())
+}
+
+
+model CallMetrics {
+  id                    String @id @default(uuid())
+  businessId            String @unique
+  callsLastHour         Int    @default(0)
+  uniqueUsers           Int    @default(0)
+  spamReports           Int    @default(0)
+  repeatCallsSameUser    Int    @default(0)
+  updatedAt             DateTime @updatedAt
+}
+
+model UserConsent {
+  id          String   @id @default(uuid())
+  userId      String
+  consentType String
+  granted     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, consentType])
+}
+
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  actorId   String
+  action    String
+  entity    String
+  metadata  Json
+  createdAt DateTime @default(now())
+}
+
+
+model EnterpriseAccount {
+  id                 String  @id @default(uuid())
+  businessId         String  @unique
+  slaTier            String  @default("FREE")
+  webhookUrl         String?
+  rateLimitPerMinute Int     @default(30)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Dispute {
+  id          String   @id @default(uuid())
+  businessId  String
+  callEventId String?
+  reason      String
+  status      String   @default("OPEN") // OPEN, UNDER_REVIEW, RESOLVED, REJECTED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
