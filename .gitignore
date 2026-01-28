@@ -7,8 +7,8 @@ venv/
 __pycache__/
 *.log
 .DS_Store
-ios/
-android/
+# ios/
+# android/
 # Note: Keeping native android code if it was manually modified, 
 # but usually Expo's android/ folder is generated.
 # In this project, we edited many files in mobile/android/app/src/main/java/com/gaosiwem/mobile/

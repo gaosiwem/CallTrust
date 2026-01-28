@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "http://10.0.2.2:3000", // Fixed for Android emulator access to local backend
+  baseURL: "http://192.168.11.193:3000",
   timeout: 8000,
 });
 

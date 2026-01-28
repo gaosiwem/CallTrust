@@ -1,60 +1,106 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
-// @ts-ignore
-// import * as Telephony from "expo-telephony";
-import { evaluateIncomingCall } from "../services/callService";
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import CallNative from "../native/CallNative";
+import { useIncomingCall } from "../hooks/call/useIncomingCall";
+import { useSubscriptionStore } from "../context/subscription/subscription.store";
 
 export default function IncomingCallOverlay() {
-  const [decision, setDecision] = useState<null | any>(null);
+  const number = useIncomingCall();
+  const tier = useSubscriptionStore((s) => s.tier);
 
-  useEffect(() => {
-    // Note: Telephony logic is commented out to allow web testing
-    // Actual call screening is handled by native Kotlin services
-    /*
-    if (!Telephony.addListener) return;
-
-    const sub = Telephony.addListener(async (event: any) => {
-      if (event.state === "RINGING") {
-        try {
-          const result = await evaluateIncomingCall(event.phoneNumber);
-          setDecision(result);
-
-          if (!result.allow) {
-            Telephony.endCall();
-          }
-        } catch (error) {
-          console.error("Evaluation error:", error);
-        }
-      }
-    });
-
-    return () => sub.remove();
-    */
-  }, []);
-
-  if (!decision) return null;
+  if (!number) return null;
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>
-        {decision.allow ? "Allowed Call" : `Blocked: ${decision.reason}`}
-      </Text>
+    <View style={styles.fullScreenContainer}>
+      <View style={styles.callInfo}>
+        <Text style={styles.label}>Incoming Call</Text>
+        <Text style={styles.phoneNumber}>{number}</Text>
+
+        {tier !== "FREE" && (
+          <View style={[styles.badge, styles.trustedBadge]}>
+            <Text style={styles.badgeText}>✓ Spam Risk Assessed</Text>
+          </View>
+        )}
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[styles.button, styles.declineButton]}
+          onPress={CallNative.reject}
+        >
+          <Text style={styles.buttonText}>Decline</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, styles.answerButton]}
+          onPress={CallNative.answer}
+        >
+          <Text style={styles.buttonText}>Answer</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  fullScreenContainer: {
     position: "absolute",
-    top: 40,
+    top: 0,
     left: 0,
     right: 0,
-    padding: 12,
-    backgroundColor: "#111",
+    bottom: 0,
+    backgroundColor: "#1a1a1a",
     zIndex: 9999,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
   },
-  text: {
+  callInfo: {
+    alignItems: "center",
+    marginBottom: 60,
+  },
+  label: {
+    fontSize: 18,
+    color: "#888",
+    marginBottom: 10,
+  },
+  phoneNumber: {
+    fontSize: 32,
+    fontWeight: "bold",
     color: "#fff",
-    textAlign: "center",
+    marginBottom: 20,
+  },
+  badge: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  trustedBadge: {
+    backgroundColor: "#4CAF50",
+  },
+  badgeText: {
+    color: "#fff",
+    fontWeight: "600",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    gap: 20,
+  },
+  button: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  answerButton: {
+    backgroundColor: "#4CAF50",
+  },
+  declineButton: {
+    backgroundColor: "#F44336",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });

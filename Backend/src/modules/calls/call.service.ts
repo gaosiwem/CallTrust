@@ -8,3 +8,10 @@ export async function logIncomingCall(
     data: { callerNumber, receiverId },
   });
 }
+
+export async function getCallLogs(receiverId: string) {
+  return prisma.callLog.findMany({
+    where: { receiverId },
+    orderBy: { createdAt: "desc" },
+  });
+}

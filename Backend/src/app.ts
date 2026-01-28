@@ -10,8 +10,11 @@ import spamMlRoutes from "./modules/spam-ml/spamScoring.routes";
 import complianceRoutes from "./modules/compliance/compliance.routes";
 import enterpriseRoutes from "./modules/enterprise/enterprise.routes";
 import disputeRoutes from "./modules/disputes/dispute.routes";
+import subscriptionRoutes from "./modules/subscriptions/subscription.routes";
 
 const app = express();
+import cors from "cors";
+app.use(cors());
 app.use(express.json());
 
 app.use("/auth", authRoutes);
@@ -25,5 +28,6 @@ app.use("/spam-insight", spamMlRoutes);
 app.use("/compliance", complianceRoutes);
 app.use("/enterprise", enterpriseRoutes);
 app.use("/disputes", disputeRoutes);
+app.use("/subscription", subscriptionRoutes);
 
 export default app;

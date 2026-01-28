@@ -9,6 +9,9 @@ import PrivacyCenterScreen from "../screens/PrivacyCenterScreen";
 import EnterpriseStatusScreen from "../screens/EnterpriseStatusScreen";
 import DisputeSubmissionScreen from "../screens/DisputeSubmissionScreen";
 import DisputeStatusScreen from "../screens/DisputeStatusScreen";
+import CallHistoryScreen from "../screens/CallHistoryScreen";
+import IncomingCallScreen from "../screens/call/IncomingCallScreen";
+import DefaultRolesScreen from "../screens/DefaultRolesScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -36,6 +39,13 @@ export default function AppNavigator() {
         component={DisputeSubmissionScreen}
       />
       <Stack.Screen name="DisputeStatus" component={DisputeStatusScreen} />
+      <Stack.Screen name="CallHistory" component={CallHistoryScreen} />
+      <Stack.Screen
+        name="IncomingCall"
+        component={IncomingCallScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen name="DefaultRoles" component={DefaultRolesScreen} />
     </Stack.Navigator>
   );
 }

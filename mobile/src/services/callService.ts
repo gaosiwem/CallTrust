@@ -11,3 +11,8 @@ export async function evaluateIncomingCall(callerNumber: string) {
     label?: string;
   };
 }
+
+export async function getCallHistory(receiverId: string) {
+  const res = await api.get(`/calls/history/${receiverId}`);
+  return res.data;
+}

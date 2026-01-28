@@ -1,0 +1,38 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+ext {
+  buildToolsVersion = "35.0.0"
+  minSdkVersion = 24
+  compileSdkVersion = 35
+  targetSdkVersion = 35
+  ndkVersion = "27.1.12297006"
+  kotlinVersion = "2.1.20"
+}
+
+buildscript {
+  repositories {
+    google()
+    mavenCentral()
+  }
+  dependencies {
+    classpath('com.android.tools.build:gradle:8.7.2')
+    classpath('com.facebook.react:react-native-gradle-plugin')
+    classpath('org.jetbrains.kotlin:kotlin-gradle-plugin')
+  }
+}
+
+allprojects {
+  // Redirect build directory to a short path to bypass Windows 250 character limit
+  if (project.path != ":") {
+    layout.buildDirectory.set(new File("C:/B/CT/${project.path.replace(':', '_')}"))
+  }
+
+  repositories {
+    google()
+    mavenCentral()
+    maven { url 'https://www.jitpack.io' }
+  }
+}
+
+apply plugin: "expo-root-project"
+apply plugin: "com.facebook.react.rootproject"
